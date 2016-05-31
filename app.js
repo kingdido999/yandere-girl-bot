@@ -6,15 +6,25 @@ const BASE_URL = 'https://yande.re/post.json?limit=100'
 
 tg.router.
   when(['/start'], 'AppController').
+  when(['/help'], 'AppController').
   when(['/pic'], 'PhotoController').
-  when(['/pic :tags'], 'PhotoController')
-
+  when(['/pic :tags'], 'PhotoController').
+  when(['/thighhighs'], 'PhotoController').
+  when(['/pantsu'], 'PhotoController').
+  when(['/nipples'], 'PhotoController').
+  when(['/swimsuits'], 'PhotoController').
+  when(['/animal_ears'], 'PhotoController').
+  when(['/loli'], 'PhotoController')
 
 tg.controller('AppController', ($) => {
   tg.for('/start', () => {
-    runMenu($)
+    // runMenu($)
   })
-});
+
+  tg.for('/help', () => {
+    // runMenu($)
+  })
+})
 
 tg.controller('PhotoController', ($) => {
   tg.for('/pic', () => {
@@ -24,6 +34,30 @@ tg.controller('PhotoController', ($) => {
   tg.for('/pic :tags', () => {
     var tags = $.query.tags
     getPost(tags, $)
+  })
+
+  tg.for('/thighhighs', () => {
+    getPost('thighhighs', $)
+  })
+
+  tg.for('/pantsu', () => {
+    getPost('pantsu', $)
+  })
+
+  tg.for('/nipples', () => {
+    getPost('nipples', $)
+  })
+
+  tg.for('/swimsuits', () => {
+    getPost('swimsuits', $)
+  })
+
+  tg.for('/animal_ears', () => {
+    getPost('animal_ears', $)
+  })
+
+  tg.for('/loli', () => {
+    getPost('loli', $)
   })
 })
 
@@ -53,10 +87,13 @@ function getPost(tags, $) {
     } else {
       if (body.length > 0) {
         var post = body[getRandomInt(0, body.length+1)]
-        $.sendPhotoFromUrl(post.sample_url)
-        runMenu($)
+        if (post) {
+          $.sendPhotoFromUrl(post.sample_url)
+        } else {
+          $.sendMessage('OOPS, try it again.')
+        }
       } else {
-        $.sendMessage('找不到你要的图片（')
+        $.sendMessage('OOPS, please try other tags.')
       }
     }
   })
