@@ -14,7 +14,8 @@ tg.router.
   when(['/nipples'], 'PhotoController').
   when(['/swimsuits'], 'PhotoController').
   when(['/animal_ears'], 'PhotoController').
-  when(['/loli'], 'PhotoController')
+  when(['/loli'], 'PhotoController').
+  otherwise('OtherwiseController')
 
 tg.controller('AppController', ($) => {
   tg.for('/start', () => {
@@ -59,6 +60,10 @@ tg.controller('PhotoController', ($) => {
   tg.for('/loli', () => {
     getPost('loli', $)
   })
+})
+
+tg.controller('OtherwiseController', ($) => {
+  $.sendMessage("I don't understand. Type / to see a list of commands.")
 })
 
 function runMenu($) {
