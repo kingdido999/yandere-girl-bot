@@ -19,6 +19,7 @@ tg.router.
 tg.controller('AppController', ($) => {
   tg.for('/start', () => {
     $.sendMessage("Welcome! Type / to see a list of commands.")
+    $.sendMessage("Welcome! Type @yandere_girl_bot to search images.")
   })
 })
 
@@ -61,19 +62,32 @@ tg.controller('OtherwiseController', ($) => {
 
 })
 
-function runMenu($) {
-  $.runMenu({
-    message: '',
-    layout: 3,
-    'thighhighs': () => { console.log(1); getPost('thighhighs', $) },
-    'pantsu': () => { getPost('pantsu', $) },
-    'nipples': () => { getPost('nipples', $) },
-    'swimsuits': () => { getPost('swimsuits', $) },
-    'animal_ears': () => { getPost('animal_ears', $) },
-    'loli': () => { getPost('loli', $) },
-    'random': () => { getPost('', $) }
+tg.inlineMode(($) => {
+  request.get({
+    url: BASE_URL + '&tags=' + $.query,
+    json: true
+  }, (error, response, body) => {
+    if (error) {
+      console.log(error);
+    } else {
+      var results = []
+
+      for (var i = 0; i < body.length; i++) {
+        if (body[i]) {
+          results.push({
+            type: 'photo',
+            photo_url: body[i].sample_url,
+            thumb_url: body[i].preview_url,
+            photo_width: body[i].sample_width,
+            photo_height: body[i].sample_height
+          })
+        }
+      }
+
+      $.paginatedAnswer(results, 10)
+    }
   })
-}
+})
 
 function getPost(tags, $) {
   console.log('getPost... tags: ' + tags)
