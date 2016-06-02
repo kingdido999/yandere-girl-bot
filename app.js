@@ -6,7 +6,6 @@ const BASE_URL = 'https://yande.re/post.json?limit=100'
 
 tg.router.
   when(['/start'], 'AppController').
-  when(['/help'], 'AppController').
   when(['/tags'], 'PhotoController').
   when(['/tags :tags'], 'PhotoController').
   when(['/thighhighs'], 'PhotoController').
@@ -20,11 +19,6 @@ tg.router.
 tg.controller('AppController', ($) => {
   tg.for('/start', () => {
     $.sendMessage("Welcome! Type / to see a list of commands.")
-    // runMenu($)
-  })
-
-  tg.for('/help', () => {
-    // runMenu($)
   })
 })
 
@@ -64,7 +58,7 @@ tg.controller('PhotoController', ($) => {
 })
 
 tg.controller('OtherwiseController', ($) => {
-  $.sendMessage("I don't understand. Type / to see a list of commands.")
+
 })
 
 function runMenu($) {

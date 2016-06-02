@@ -1,7 +1,7 @@
 {
   "name": "yandere-girl-bot",
   "version": "1.0.0",
-  "description": "",
+  "description": "yande.re",
   "main": "app.js",
   "dependencies": {
     "request": "^2.72.0",
