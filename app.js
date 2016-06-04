@@ -69,6 +69,8 @@ tg.controller('OtherwiseController', ($) => {
 })
 
 tg.inlineMode(($) => {
+  console.log('inlineMode... tags: ' + $.query)
+  
   request.get({
     url: BASE_URL + '&tags=' + $.query,
     json: true
@@ -76,10 +78,10 @@ tg.inlineMode(($) => {
     if (error) {
       console.log(error);
     } else {
-      var results = []
+      if (body.length > 0) {
+        var results = []
 
-      for (var i = 0; i < body.length; i++) {
-        if (body[i]) {
+        for (var i = 0; i < body.length; i++) {
           results.push({
             type: 'photo',
             photo_url: body[i].sample_url,
@@ -88,9 +90,10 @@ tg.inlineMode(($) => {
             photo_height: body[i].sample_height
           })
         }
-      }
 
-      $.paginatedAnswer(results, 10)
+        shuffle(results)
+        $.paginatedAnswer(results, 6)
+      }
     }
   })
 })
@@ -119,8 +122,26 @@ function getPost(tags, $) {
   })
 }
 
-// Returns a random integer between min (included) and max (excluded)
-// Using Math.round() will give you a non-uniform distribution!
+/**
+ * Returns a random integer between min (included) and max (excluded)
+ * @param  {number} min included
+ * @param  {number} max excluded
+ * @return {number} a random integer
+ */
 function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min)) + min;
+}
+
+/**
+ * Shuffles array in place.
+ * @param {Array} a items The array containing the items.
+ */
+function shuffle(a) {
+    var j, x, i;
+    for (i = a.length; i; i -= 1) {
+        j = Math.floor(Math.random() * i);
+        x = a[i - 1];
+        a[i - 1] = a[j];
+        a[j] = x;
+    }
 }
