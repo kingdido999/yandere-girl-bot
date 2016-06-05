@@ -1,7 +1,10 @@
 'use strict'
 
-var tg = require('telegram-node-bot')('218892755:AAES6qdhI1wt39YDDL6Hrp6e3hMGy4ZrszU')
-var request = require('request')
+const fs = require('fs');
+const path = require('path');
+const config = JSON.parse(fs.readFileSync(path.normalize(__dirname + '/config.json', 'utf8')));
+const tg = require('telegram-node-bot')(config.token)
+const request = require('request')
 const BASE_URL = 'https://yande.re/post.json?limit=100'
 
 tg.router.
@@ -19,13 +22,11 @@ tg.router.
 
 tg.controller('AppController', ($) => {
   tg.for('/start', () => {
-    $.sendMessage("Type / to see a list of commands.")
-    $.sendMessage("Type @yandere_girl_bot to search images.")
+    $.sendMessage("Type " + config.username + " to search images.")
   })
 
   tg.for('/help', () => {
-    $.sendMessage("Type / to see a list of commands.")
-    $.sendMessage("Type @yandere_girl_bot to search images.")
+    $.sendMessage("Type " + config.username + " to search images.")
   })
 })
 
@@ -70,11 +71,8 @@ tg.controller('OtherwiseController', ($) => {
 
 tg.inlineMode(($) => {
   console.log('inlineMode... tags: ' + $.query)
-  
-  request.get({
-    url: BASE_URL + '&tags=' + $.query,
-    json: true
-  }, (error, response, body) => {
+
+  fetchPosts($.query, (error, response, body) => {
     if (error) {
       console.log(error);
     } else {
@@ -97,6 +95,17 @@ tg.inlineMode(($) => {
     }
   })
 })
+
+function fetchPosts(tags, callback) {
+  console.log('fetch posts...')
+
+  request.get({
+    url: BASE_URL + '&tags=' + tags,
+    json: true
+  }, (error, response, body) => {
+    callback(error, response, body)
+  })
+}
 
 function getPost(tags, $) {
   console.log('getPost... tags: ' + tags)
@@ -121,6 +130,7 @@ function getPost(tags, $) {
     }
   })
 }
+
 
 /**
  * Returns a random integer between min (included) and max (excluded)
