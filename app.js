@@ -2,22 +2,25 @@
 
 const fs = require('fs');
 const path = require('path');
+const request = require('request')
 const config = JSON.parse(fs.readFileSync(path.normalize(__dirname + '/config.json', 'utf8')));
 const tg = require('telegram-node-bot')(config.token)
-const request = require('request')
 const BASE_URL = 'https://yande.re/post.json?limit=100'
 
+/**
+ * Command mode.
+ */
 tg.router.
   when(['/start'], 'AppController').
   when(['/help'], 'AppController').
-  when(['/tags'], 'PhotoController').
-  when(['/tags :tags'], 'PhotoController').
-  when(['/thighhighs'], 'PhotoController').
-  when(['/pantsu'], 'PhotoController').
-  when(['/nipples'], 'PhotoController').
-  when(['/swimsuits'], 'PhotoController').
-  when(['/animal_ears'], 'PhotoController').
-  when(['/loli'], 'PhotoController').
+  when(['/tags'], 'AppController').
+  when(['/tags :tags'], 'AppController').
+  when(['/thighhighs'], 'AppController').
+  when(['/pantsu'], 'AppController').
+  when(['/nipples'], 'AppController').
+  when(['/swimsuits'], 'AppController').
+  when(['/animal_ears'], 'AppController').
+  when(['/loli'], 'AppController').
   otherwise('OtherwiseController')
 
 tg.controller('AppController', ($) => {
@@ -28,16 +31,13 @@ tg.controller('AppController', ($) => {
   tg.for('/help', () => {
     $.sendMessage("Type " + config.username + " to search images.")
   })
-})
 
-tg.controller('PhotoController', ($) => {
   tg.for('/tags', () => {
     getPost('', $)
   })
 
   tg.for('/tags :tags', () => {
-    var tags = $.query.tags
-    getPost(tags, $)
+    getPost($.query.tags, $)
   })
 
   tg.for('/thighhighs', () => {
@@ -69,8 +69,12 @@ tg.controller('OtherwiseController', ($) => {
 
 })
 
+/**
+ * Inline mode.
+ * Fetch and paginate all posts.
+ */
 tg.inlineMode(($) => {
-  console.log('inlineMode... tags: ' + $.query)
+  console.log('Inline mode: ' + $.query)
 
   fetchPosts($.query, (error, response, body) => {
     if (error) {
@@ -96,9 +100,10 @@ tg.inlineMode(($) => {
   })
 })
 
+/**
+ * Get posts by tags with callback.
+ */
 function fetchPosts(tags, callback) {
-  console.log('fetch posts...')
-
   request.get({
     url: BASE_URL + '&tags=' + tags,
     json: true
@@ -107,8 +112,11 @@ function fetchPosts(tags, callback) {
   })
 }
 
+/**
+ * Get one random post by tags.
+ */
 function getPost(tags, $) {
-  console.log('getPost... tags: ' + tags)
+  console.log('Command mode: ' + tags)
 
   request.get({
     url: BASE_URL + '&tags=' + tags,
@@ -130,7 +138,6 @@ function getPost(tags, $) {
     }
   })
 }
-
 
 /**
  * Returns a random integer between min (included) and max (excluded)
