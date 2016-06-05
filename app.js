@@ -11,16 +11,18 @@ const BASE_URL = 'https://yande.re/post.json?limit=100'
  * Command mode.
  */
 tg.router.
-  when(['/start'], 'AppController').
-  when(['/help'], 'AppController').
-  when(['/tags'], 'AppController').
-  when(['/tags :tags'], 'AppController').
-  when(['/thighhighs'], 'AppController').
-  when(['/pantsu'], 'AppController').
-  when(['/nipples'], 'AppController').
-  when(['/swimsuits'], 'AppController').
-  when(['/animal_ears'], 'AppController').
-  when(['/loli'], 'AppController').
+  when([
+    '/start',
+    '/help',
+    '/tags',
+    '/tags :tags',
+    '/thighhighs',
+    '/pantsu',
+    '/nipples',
+    '/swimsuits',
+    '/animal_ears',
+    '/loli'
+  ], 'AppController').
   otherwise('OtherwiseController')
 
 tg.controller('AppController', ($) => {
