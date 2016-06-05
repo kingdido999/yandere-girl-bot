@@ -34,37 +34,41 @@ tg.controller('AppController', ($) => {
     $.sendMessage("Type " + config.username + " to search images.")
   })
 
-  tg.for('/tags', () => {
-    getPost('', $)
-  })
+  tg.for('/tags',         () => { getPost('') })
+  tg.for('/tags :tags',   () => { getPost($.query.tags) })
+  tg.for('/thighhighs',   () => { getPost('thighhighs') })
+  tg.for('/pantsu',       () => { getPost('pantsu') })
+  tg.for('/nipples',      () => { getPost('nipples') })
+  tg.for('/swimsuits',    () => { getPost('swimsuits') })
+  tg.for('/animal_ears',  () => { getPost('animal_ears') })
+  tg.for('/loli',         () => { getPost('loli') })
 
-  tg.for('/tags :tags', () => {
-    getPost($.query.tags, $)
-  })
+  /**
+   * Get one random post by tags.
+   */
+  function getPost(tags) {
+    console.log('Command mode: ' + tags)
 
-  tg.for('/thighhighs', () => {
-    getPost('thighhighs', $)
-  })
-
-  tg.for('/pantsu', () => {
-    getPost('pantsu', $)
-  })
-
-  tg.for('/nipples', () => {
-    getPost('nipples', $)
-  })
-
-  tg.for('/swimsuits', () => {
-    getPost('swimsuits', $)
-  })
-
-  tg.for('/animal_ears', () => {
-    getPost('animal_ears', $)
-  })
-
-  tg.for('/loli', () => {
-    getPost('loli', $)
-  })
+    request.get({
+      url: BASE_URL + '&tags=' + tags.trim(),
+      json: true
+    }, (error, response, body) => {
+      if (error) {
+        console.log(error);
+      } else {
+        if (body.length > 0) {
+          var post = body[getRandomInt(0, body.length+1)]
+          if (post) {
+            $.sendPhotoFromUrl(post.sample_url)
+          } else {
+            $.sendMessage('OOPS, try it again.')
+          }
+        } else {
+          $.sendMessage('OOPS, please try other tags.')
+        }
+      }
+    })
+  }
 })
 
 tg.controller('OtherwiseController', ($) => {
@@ -111,33 +115,6 @@ function fetchPosts(tags, callback) {
     json: true
   }, (error, response, body) => {
     callback(error, response, body)
-  })
-}
-
-/**
- * Get one random post by tags.
- */
-function getPost(tags, $) {
-  console.log('Command mode: ' + tags)
-
-  request.get({
-    url: BASE_URL + '&tags=' + tags,
-    json: true
-  }, (error, response, body) => {
-    if (error) {
-      console.log(error);
-    } else {
-      if (body.length > 0) {
-        var post = body[getRandomInt(0, body.length+1)]
-        if (post) {
-          $.sendPhotoFromUrl(post.sample_url)
-        } else {
-          $.sendMessage('OOPS, try it again.')
-        }
-      } else {
-        $.sendMessage('OOPS, please try other tags.')
-      }
-    }
   })
 }
 
